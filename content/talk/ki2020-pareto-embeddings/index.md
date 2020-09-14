@@ -66,3 +66,75 @@ slides: ""
 #   Otherwise, set `projects = []`.
 projects: []
 ---
+
+# Virtual Poster
+
+## Introduction
+{{< figure src="choice.png" title="A person choosing out of a set of headphones." numbered="true" width="80%">}}
+We consider a choice problem where a decision maker is confronted with a set of alternatives of which they have to choose a subset.
+Our ultimate goal is to explain and predict the observed choices.
+Every alternative is represented by a vector of features.
+A popular strategy in choice modelling is to assume that the choice probabilities depend on an underlying (latent) real-valued utility function of the decision maker.
+Under this assumption, learning comes down to identifying the parameters
+of such a utility function.
+This works well for the case where only single alternatives are chosen, but
+is non-trivial to apply to our setting where *subsets* of alternatives are chosen.
+Either one faces combinatorial problems calculating the probabilities for many
+subsets, or has to resort to thresholding techniques.
+It would be desirable to have an approach which is able to learn a utility function and the choices result naturally given this function.
+
+## Research Questions
+- Can we generalize learning of a utility function that admits a natural choice
+  function?
+- Are we able to learn such a function from data?
+
+## Pareto-Embeddings
+Let $\mathcal{X} \subseteq \mathbb{R}^d$ be the set of objects.
+A set of objects $Q = \{\mathbf{x}_1, \dots, \mathbf{x}_m\}$ we call
+a *query*.
+A classical approach to model choices is to assume the existence of
+a utility function $\mathcal{X} \to \mathbb{R}$.
+A singular choice then arises naturally as picking the object with
+highest utility.
+
+{{< figure src="featured.png" title="A Pareto-embedding $\varphi$ maps a given set of objects into a higher-dimensional space $\mathcal{Z}$." numbered="true" width="80%">}}
+To solve the problem of learning *subset* choices, we propose to embed the objects into a special higher-dimensional utility space $\mathcal{Z} \subseteq \mathbb{R}^{d'}$, in which subset choices are naturally identified by *Pareto-optimal* points (see [Figure 2](#figure-a-pareto-embedding-maps-a-given-set-of-objects-into-a-higher-dimensional-space)).
+A point $\mathbf{z}\_i$ in the embedding space is *dominated* by another point $\mathbf{z}\_j$
+if $z\_{i, k} \leq z\_{j, k}$ for all $k \in [d']$ and $z\_{i, k} < z\_{j, k}$ for at least one such $k$.
+Then, a point $\mathbf{z}\_i$ is called *Pareto-optimal*
+(with respect to $Z$), if it is not dominated by any other point $\mathbf{z}\_j \in Z$, $1 \leq j\neq i \leq m$.
+
+
+To induce a suitable embedding function $\varphi$ from data, we devise a differentiable loss function tailored to this task (see the paper for more details).
+
+<!--
+{{< figure src="viz_pareto_dominance.png" title="A" numbered="true">}}
+{{< figure src="viz_pareto_optimality.png" title="A" numbered="true">}}
+-->
+
+## Results
+{{< figure src="viz_architecture.png" title="Each object is passed through a (deep) multi-layer perceptron followed by a linear output layer to produce the embedding." numbered="true" width="80%">}}
+We utilize the loss function as part of a deep learning pipeline to
+investigate the feasibility of learning such a Pareto-embedding (see [Figure 3](#figure-each-object-is-passed-through-a-deep-multi-layer-perceptron-followed-by-a-linear-output-layer-to-produce-the-embedding)).
+
+We evaluate our approach on a suite of benchmark problems from the field of multi-criteria optimization.
+We use the well-known DTLZ and ZDT test suites, containing datasets of varying difficulty.
+Adding a simple two-dimensional two parabola (TP) dataset, we end up with 14 benchmark problems in total.
+
+{{< figure src="viz_results.png" title="Results of the empirical evaluation. The bars show the average performance in terms of A-mean across the 5 outer splits. The sticks show the estimated standard deviation." numbered="true">}}
+
+The results are shown in [Figure 4](#figure-results-of-the-empirical-evaluation-the-bars-show-the-average-performance-in-terms-of-a-mean-across-the-5-outer-splits-the-sticks-show-the-estimated-standard-deviation).
+For five of the problems, the embedding approach is able to achieve an
+average A-mean of over 90%, indicating that for these
+problems we often identify the choice set correctly.
+This is important, as it shows that the loss function is able
+to steer the model parameters towards a valid Pareto-embedding.
+Thus, it is apparent that our learner is performing better than random guessing
+on all datasets.
+
+
+## Conclusion
+
+- We proposed a novel way to tackle the problem of learning choice functions as an embedding problem.
+- To learn an embedding from given data, we develop a suitable loss function that penalizes violations of the Pareto condition.
+- The first results on benchmark problems are promising and we are looking forward to a more extensive empirical evaluation and applications to real-world choice problems.
