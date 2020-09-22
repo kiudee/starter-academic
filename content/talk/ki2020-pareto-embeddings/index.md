@@ -105,17 +105,23 @@ Then, a point $\mathbf{z}\_i$ is called *Pareto-optimal*
 (with respect to $Z$), if it is not dominated by any other point $\mathbf{z}\_j \in Z$, $1 \leq j\neq i \leq m$.
 
 
-To induce a suitable embedding function $\varphi$ from data, we devise a differentiable loss function tailored to this task (see the paper for more details).
+To induce a suitable embedding function $\varphi$ from data, we devise a differentiable loss function tailored to this task (see the paper for more details). The loss function consists of multiple terms of which the following two are the most important.
 
-<!--
-{{< figure src="viz_pareto_dominance.png" title="A" numbered="true">}}
-{{< figure src="viz_pareto_optimality.png" title="A" numbered="true">}}
--->
+{{< figure src="viz_pareto_optimality.png" title="$L_{\text{PO}}$ penalizes all objects that dominate a chosen objects." numbered="true">}}
+With the first loss term $L_{\text{PO}}$, depicted in [Figure 3](figure-l_textpo-ensures-that-chosen-objects-are-not-dominated), we ensure that all objects which have been chosen, are not dominated in the new space $\mathcal{Z}$.
+
+{{< figure src="viz_pareto_dominance.png" title="$L_{\text{DOM}}$ penalizes the object closest to dominating an unchosen object." numbered="true">}}
+Now for all objects which were not chosen from the input set, we only have to ensure that one object dominates it.
+The second loss term $L_{\text{DOM}}$, depicted in [Figure 4](figure-l_textdom-penalizes-the-object-closest-to-dominating-an-unchosen-object), does so by determining the object which is closest to dominating the unchosen
+object and penalizing it.
+
+<!--$$L\_{\text{PO}}(Z, \vec{c}) = \sum_{1 \leq i \neq j \leq |Z|}
+  \max\Bigl( 0, c_j\cdot \min_{1\leq k \leq d'} (1 + z_{i,k} - z_{j,k}) \Bigr)$$-->
 
 ## Results
 {{< figure src="viz_architecture.png" title="Each object is passed through a (deep) multi-layer perceptron followed by a linear output layer to produce the embedding." numbered="true" width="80%">}}
 We utilize the loss function as part of a deep learning pipeline to
-investigate the feasibility of learning such a Pareto-embedding (see [Figure 3](#figure-each-object-is-passed-through-a-deep-multi-layer-perceptron-followed-by-a-linear-output-layer-to-produce-the-embedding)).
+investigate the feasibility of learning such a Pareto-embedding (see [Figure 5](#figure-each-object-is-passed-through-a-deep-multi-layer-perceptron-followed-by-a-linear-output-layer-to-produce-the-embedding)).
 
 We evaluate our approach on a suite of benchmark problems from the field of multi-criteria optimization.
 We use the well-known DTLZ and ZDT test suites, containing datasets of varying difficulty.
@@ -123,7 +129,7 @@ Adding a simple two-dimensional two parabola (TP) dataset, we end up with 14 ben
 
 {{< figure src="viz_results.png" title="Results of the empirical evaluation. The bars show the average performance in terms of A-mean across the 5 outer splits. The sticks show the estimated standard deviation." numbered="true">}}
 
-The results are shown in [Figure 4](#figure-results-of-the-empirical-evaluation-the-bars-show-the-average-performance-in-terms-of-a-mean-across-the-5-outer-splits-the-sticks-show-the-estimated-standard-deviation).
+The results are shown in [Figure 6](#figure-results-of-the-empirical-evaluation-the-bars-show-the-average-performance-in-terms-of-a-mean-across-the-5-outer-splits-the-sticks-show-the-estimated-standard-deviation).
 For five of the problems, the embedding approach is able to achieve an
 average A-mean of over 90%, indicating that for these
 problems we often identify the choice set correctly.
